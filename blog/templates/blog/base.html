@@ -46,13 +46,12 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
           {% if user.is_authenticated %}
-          <li><a>Welcome, {{user.username}}</a></li>
+          <li><a href={% url 'account:profile' %}>Welcome, {{user.username}}</a></li>
           <li><a href={% url 'blog:post_new' %}><span class="glyphicon glyphicon-plus"></span>Create Post</a></li>
           <li><a href={% url 'blog:draft_list' %}><span class="glyphicon glyphicon-book"></span> Drafts </a></li>
           {% comment %} {% endcomment %}
           <li><a href={% url 'logout' %}><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
           {% else %}
-          {% comment %} TODO: Add later {% endcomment %}
           <li><a href={% url 'registration' %}><span class="glyphicon glyphicon-user"></span>
               Sign Up</a>
           </li>

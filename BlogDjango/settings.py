@@ -14,8 +14,8 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATIC_DIR = os.path.join(BASE_DIR, "blog/static")
-TEMPLATE_DIR = os.path.join(BASE_DIR, "blog/templates/blog")
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+MEDIA_DIR = os.path.join(BASE_DIR, "media")
 
 
 # Quick-start development settings - unsuitable for production
@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blog'
+    'blog',
+    'account'
 ]
 
 MIDDLEWARE = [
@@ -57,7 +58,7 @@ ROOT_URLCONF = 'BlogDjango.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATE_DIR, ],
+        'DIRS': [os.path.join(BASE_DIR, "blog/templates/blog"), os.path.join(BASE_DIR, "account/templates/account")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -120,6 +121,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
+# Static
 STATIC_URL = '/static/'
 STATIC_ROOT = STATIC_DIR
+STATICFILES_DIRS = [os.path.join(
+    BASE_DIR, "blog/static"), os.path.join(BASE_DIR, "account/static")]
+
+# MEDIA
+MEDIA_ROOT = MEDIA_DIR
+MEDIA_URL = "/media/"
+
 LOGIN_REDIRECT_URL = '/'

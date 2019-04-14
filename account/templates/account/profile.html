@@ -1,0 +1,19 @@
+{% extends "blog/base.html" %}
+{% block title_block %}
+<title>Profile</title>
+{% endblock title_block %}
+{% block body_block %}
+<div class="container">
+  <h1>Your profile</h1>
+  {% if profile_src %}
+  <img src="/media/{{profile_src}}" alt="profile_picture" width="300">
+  {% endif %}
+  <p><strong>Username:</strong> {{user.username}}</p>
+  <p><strong>Email:</strong> {{user.email}}</p>
+  <p><strong>Firstname:</strong> {{user.first_name}}</p>
+  <p><strong>Lastname:</strong> {{user.last_name}}</p>
+
+  <br>
+  <a href={% url 'account:edit_profile' %} class="btn btn-primary">Edit</a>
+</div>
+{% endblock body_block %}

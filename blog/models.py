@@ -1,13 +1,21 @@
-from django.db import models
-from django.utils import timezone
-from django.urls import reverse
+import datetime
+from time import gmtime
+
 from django.contrib.auth.models import User
+from django.db import models
+from django.urls import reverse
+from django.utils import timezone
+
 # Create your models here.
+
+
+def image_directory_path(instance, filename):
+    return 'images/user_{}/({})-{}'.format(instance.user.id, datetime.datetime.now().strftime("%d-%m-%Y %H:%M"), filename)
 
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_pic = models.ImageField(blank=True, null=True)
+    profile_pic = models.ImageField(blank=True, upload_to=image_directory_path)
 
     def __str__(self):
         return self.user.username

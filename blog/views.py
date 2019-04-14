@@ -1,5 +1,5 @@
 from blog.forms import CommentForm, PostForm, UserForm, UserProfileForm
-from blog.models import Comment, Post
+from blog.models import Comment, Post, UserProfile
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
@@ -7,7 +7,8 @@ from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
-
+from django.http import HttpResponseRedirect
+from django.contrib.auth import authenticate, login
 # Create your views here.
 
 
@@ -24,6 +25,13 @@ class PostListView(ListView):
 
     """ context_object_name = ''
     template_name = '' """
+
+
+class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = UserProfile
+    login_url = "/auth/login/"
+    form_class = (UserProfileForm, UserForm)
+    fields = ("first_name", "last_name", "username", "email", "profile_pic")
 
 
 class PostDetailView(DetailView):
@@ -79,7 +87,8 @@ def register(request):
                 profile.profile_pic = request.FILES['profile_pic']
 
             profile.save()
-            reverse('blog:post_list')
+            login(request, user)
+            return HttpResponseRedirect(reverse('blog:post_list'))
         else:
             print(user_form.errors, profile_form.errors)
     else:
