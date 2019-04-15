@@ -2,6 +2,7 @@
 {% block title_block %}
 <title>Confirm Delete</title>
 {% endblock title_block %}
+{% block body_block %}
 <form method="post">
   {% csrf_token %}
   <p>Are you sure to remove {{object}}?</p>

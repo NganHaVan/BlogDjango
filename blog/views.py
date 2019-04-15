@@ -1,14 +1,18 @@
-from blog.forms import CommentForm, PostForm, UserForm, UserProfileForm
-from blog.models import Comment, Post, UserProfile
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Prefetch
+from django.db.models.query import prefetch_related_objects
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
-from django.http import HttpResponseRedirect
-from django.contrib.auth import authenticate, login
+
+from blog.forms import CommentForm, PostForm, UserForm, UserProfileForm
+from blog.models import Comment, Post, UserProfile
+
 # Create your views here.
 
 
@@ -18,13 +22,12 @@ class AboutView(TemplateView):
 
 class PostListView(ListView):
     model = Post
-    context_object_name = "post_list"
 
-    """ def get_queryset(self):
-        return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date') """
-
-    """ context_object_name = ''
-    template_name = '' """
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post_list'] = Post.objects.filter(
+            published_date__lte=timezone.now()).order_by('-published_date')
+        return context
 
 
 class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
@@ -40,33 +43,35 @@ class PostDetailView(DetailView):
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
-    login_url = "/auth/login/"
-    redirect_field_name = "blog/post_detail.html"
+    login_url = '/auth/login/'
+    redirect_field_name = None
+    success_url = "/"
     form_class = PostForm
     model = Post
 
 
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     login_url = "/auth/login/"
-    redirect_field_name = "blog/post_detail.html"
+    redirect_field_name = None
+    success_url = "/"
     form_class = PostForm
     model = Post
 
 
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
-    success_url = reverse_lazy('post_list')
+    login_url = "/auth/login/"
+    redirect_field_name = None
+    success_url = reverse_lazy('blog:post_list')
 
 
 class DraftPostListView(LoginRequiredMixin, ListView):
     model = Post
     login_url = "/auth/login/"
-    redirect_field_name = "blog/post_list.html"
-    """ context_object_name = ''
-    template_name = '' """
+    redirect_field_name = None
 
-    """ def get_queryset(self):
-        return Post.objects.filter(published_date__isnull=True).order_by('-create_date') """
+    def get_queryset(self):
+        return Post.objects.filter(published_date__isnull=True).order_by('-create_date')
 #####################
 
 
@@ -91,17 +96,21 @@ def register(request):
             return HttpResponseRedirect(reverse('blog:post_list'))
         else:
             print(user_form.errors, profile_form.errors)
+            return render(request, "registration/register.html", {'user_form': user_form, 'profile_form': profile_form})
     else:
+        if request.user.is_authenticated:
+            return redirect("/")
+
         user_form = UserForm()
         profile_form = UserProfileForm()
-    return render(request, "registration/register.html", {'user_form': user_form, 'profile_form': profile_form})
+        return render(request, "registration/register.html", {'user_form': user_form, 'profile_form': profile_form})
 
 
 @login_required
 def post_publish(request, pk):
     post = get_object_or_404(Post, pk=pk)
     post.publish()
-    return redirect('post_detail', pk=pk)
+    return redirect('blog:post_detail', pk=pk)
 
 
 @login_required
@@ -126,7 +135,7 @@ def add_comment_to_post(request, pk):
 def comment_approval(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     comment.approve()
-    return redirect('post_detail', pk=comment.post.pk)
+    return redirect('blog:post_detail', pk=comment.post.pk)
 
 
 @login_required

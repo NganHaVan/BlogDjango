@@ -8,9 +8,9 @@
   <div class="post">
     <h1><a href={% url 'blog:post_detail' pk=post.pk %}>{{post.title}}</a></h1>
     <div class="date">
-      <p>Publised on: {{post.publised_date|date:"D M Y"}}</p>
+      <p>Publised on: {{post.published_date}}</p>
     </div>
-    <a href={% url 'blog:post_detail' pk=post.pk %}>Comments: {{post.approve_comment.count}}</a>
+    <a href={% url 'blog:post_detail' pk=post.pk %}>Comments: {{ post.filter_approve_comment.count }}</a>
   </div>
   {% endfor %}
 </div>

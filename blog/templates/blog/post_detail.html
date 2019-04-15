@@ -5,9 +5,9 @@
 {% block body_block %}
 <h1 class="posttitle loader">
   {{post.title}}</h1>
-{% if post.publised_date %}
+{% if post.published_date %}
 <div class="date postdate">
-  {{post.publised_date}}
+  {{post.published_date}}
 </div>
 {% else %}
 <a href={% url 'blog:post_publish' pk=post.pk %} class="btn btn-default">Publish</a>
@@ -25,22 +25,26 @@
 <hr>
 {% comment %} {% endcomment %}
 <a href={% url 'blog:add_comment_to_post' pk=post.pk %} class="btn btn-primary btn-comment">Add comment</a>
-<div class="container comment_form">
+<br>
+<br>
+<div class="container">
   {% for comment in post.comments.all %}
-  {% if user.is_authenticated or comment.approve_comment %}
-  {{comment.create_date}}
-  {% if not comment.approve_comment %}
-  <a href={% url 'blog:comment_approval' pk=comment.pk %} class="btn btn-primary">
-    <span class="glyphicon glyphicon-ok"></span>Approve
-  </a>
-  <a href={% url 'blog:comment_remove' pk=comment.pk %} class="btn btn-danger">
-    <span class="glyphicon glyphicon-remove"></span>Deny
-  </a>
-  {% endif %}
-  <p>Author: {{comment.author.username}}</p>
-  <p>{{comment.content|safe|linebreaksbr}}</p>
-  <p>Posted by: {{comment.author}}</p>
-  {% endif %}
+  <div class="comment_form">
+    {% if user.is_authenticated or comment.approve_comment %}
+    {{comment.create_date}}
+    {% if not comment.approve_comment %}
+    <a href={% url 'blog:comment_approval' pk=comment.pk %} class="btn btn-primary">
+      <span class="glyphicon glyphicon-ok"></span>Approve
+    </a>
+    <a href={% url 'blog:comment_remove' pk=comment.pk %} class="btn btn-danger">
+      <span class="glyphicon glyphicon-remove"></span>Deny
+    </a>
+    {% endif %}
+    <p>Author: {{comment.author.username}}</p>
+    <p>{{comment.content|safe|linebreaksbr}}</p>
+    <p>Posted by: {{comment.author}}</p>
+    {% endif %}
+  </div>
   {% empty %}
   <p>No comments</p>
   {% endfor %}

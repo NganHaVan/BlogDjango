@@ -15,7 +15,8 @@ def image_directory_path(instance, filename):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_pic = models.ImageField(blank=True, upload_to=image_directory_path)
+    profile_pic = models.ImageField(blank=True, upload_to=image_directory_path,
+                                    default="personal-user-illustration-@2x.png")
 
     def __str__(self):
         return self.user.username
@@ -33,7 +34,7 @@ class Post(models.Model):
         self.save()
 
     def filter_approve_comment(self):
-        return self.comments.filter(approved_comment=True)
+        return self.comments.filter(approve_comment=True)
 
     # Redirect after creating a post
     def get_absolute_url(self):

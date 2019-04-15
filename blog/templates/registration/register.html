@@ -7,6 +7,14 @@
   <div class="box">
     <h2>Please fill in the register form</h2>
     <br>
+    {% if user_form.errors %}
+    {{user_form.errors}}
+    {% else %}
+    {% endif %}
+    {% if profile_form.errors %}
+    {{profile_form.errors}}
+    {% else %}
+    {% endif %}
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       {{user_form.as_p}}
